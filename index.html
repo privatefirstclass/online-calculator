@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Calculator</title>
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+    }
+
+    .container {
+        background: #fff;
+        width: 100%;
+        max-width: 420px;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .product {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .product span {
+        font-weight: 500;
+    }
+
+    input[type="number"] {
+        width: 60px;
+        padding: 6px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        text-align: center;
+    }
+
+    button {
+        width: 100%;
+        margin-top: 20px;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        background: #667eea;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #5a67d8;
+    }
+
+    .receipt {
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px dashed #ccc;
+    }
+
+    .receipt p {
+        display: flex;
+        justify-content: space-between;
+        margin: 6px 0;
+        font-size: 15px;
+    }
+
+    .total {
+        font-weight: bold;
+        font-size: 18px;
+        color: #333;
+    }
+
+    .status {
+        text-align: center;
+        margin-top: 10px;
+        font-weight: 600;
+        color: #38a169;
+    }
+
+    .no-discount {
+        color: #e53e3e;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🛒 Order Summary</h1>
+
+    <div class="product">
+        <span>Item A (₱500)</span>
+        <input type="number" min="0" value="0" id="qty0">
+    </div>
+    <div class="product">
+        <span>Item B (₱1200)</span>
+        <input type="number" min="0" value="0" id="qty1">
+    </div>
+    <div class="product">
+        <span>Item C (₱2500)</span>
+        <input type="number" min="0" value="0" id="qty2">
+    </div>
+    <div class="product">
+        <span>Item D (₱800)</span>
+        <input type="number" min="0" value="0" id="qty3">
+    </div>
+
+    <button onclick="processOrder()">Calculate Total</button>
+
+    <div class="receipt" id="receipt"></div>
+</div>
+
+<script>
+    // Data Setup: Product Prices
+    const productPrices = [500, 1200, 2500, 800];
+
+    function calculateTotal(prices, qty) {
+        let total = 0;
+        for (let i = 0; i < prices.length; i++) {
+            total += prices[i] * qty[i];
+        }
+        return total;
+    }
+
+    function applyDiscount(totalAmount) {
+        return totalAmount >= 5000 ? totalAmount * 0.10 : 0;
+    }
+
+    function processOrder() {
+        let quantities = [];
+
+        for (let i = 0; i < productPrices.length; i++) {
+            quantities.push(Number(document.getElementById(`qty${i}`).value));
+        }
+
+        const subtotal = calculateTotal(productPrices, quantities);
+        const discount = applyDiscount(subtotal);
+        const finalTotal = subtotal - discount;
+
+        displayReceipt(subtotal, discount, finalTotal);
+    }
+
+    function displayReceipt(subtotal, discount, finalTotal) {
+        const receipt = document.getElementById("receipt");
+
+        receipt.innerHTML = `
+            <p><span>Subtotal</span><span>₱${subtotal.toFixed(2)}</span></p>
+            <p><span>Discount</span><span>-₱${discount.toFixed(2)}</span></p>
+            <p class="total"><span>Total</span><span>₱${finalTotal.toFixed(2)}</span></p>
+            <div class="status ${discount > 0 ? '' : 'no-discount'}">
+                ${discount > 0 ? '10% Discount Applied 🎉' : 'No Discount Applied'}
+            </div>
+        `;
+    }
+</script>
+
+</body>
+</html>
